@@ -3,6 +3,7 @@ package com.thanthu.orgservice.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.thanthu.orgservice.converters.OrganizationDtoToOrganizationConverter;
 import com.thanthu.orgservice.converters.OrganizationToOrganizationDtoConverter;
 import com.thanthu.orgservice.dtos.OrganizationDto;
+import com.thanthu.orgservice.dtos.PracticeDto;
 import com.thanthu.orgservice.model.Organization;
 import com.thanthu.orgservice.model.Practice;
 import com.thanthu.orgservice.repositories.OrganizationRepository;
@@ -48,6 +50,9 @@ class OrganizationServiceImplTest {
 	
 	@Mock
 	private OrganizationRepository organizationRepository;
+	
+	@Mock
+	private PracticeService practiceService;
 	
 	@InjectMocks
 	private OrganizationServiceImpl organizationService;
@@ -152,11 +157,11 @@ class OrganizationServiceImplTest {
 					.build())
 				.collect(Collectors.toList());
 		
-		when(organizationRepository.findAllByName(NAME)).thenReturn(organizations);
+		when(organizationRepository.findAllByName(NAME.toLowerCase())).thenReturn(organizations);
 		
 		Set<OrganizationDto> organizationDtos = organizationService.findOrganizationsByName(NAME, false);
 		
-		verify(organizationRepository, times(1)).findAllByName(NAME);
+		verify(organizationRepository, times(1)).findAllByName(NAME.toLowerCase());
 		assertEquals(ids.size(), organizationDtos.size());
 		assertEquals(0, organizationDtos.iterator().next().getPractices().size());
 	}
@@ -174,11 +179,11 @@ class OrganizationServiceImplTest {
 					.build())
 				.collect(Collectors.toList());
 		
-		when(organizationRepository.findAllByName(NAME)).thenReturn(organizations);
+		when(organizationRepository.findAllByName(NAME.toLowerCase())).thenReturn(organizations);
 		
 		Set<OrganizationDto> organizationDtos = organizationService.findOrganizationsByName(NAME, true);
 		
-		verify(organizationRepository, times(1)).findAllByName(NAME);
+		verify(organizationRepository, times(1)).findAllByName(NAME.toLowerCase());
 		assertEquals(ids.size(), organizationDtos.size());
 		assertEquals(2, organizationDtos.iterator().next().getPractices().size());
 	}
@@ -205,6 +210,29 @@ class OrganizationServiceImplTest {
 		
 		assertEquals(ID, savedOrganizationDto.getId());
 		assertEquals(2, savedOrganizationDto.getPractices().size());
+	}
+	
+	@Test
+	public void testDeleteOrganization() {
+		when(organizationRepository.findById(ID)).thenReturn(Optional.of(organization));
+		doNothing().when(organizationRepository).delete(organization);
+		
+		OrganizationDto deletedOrganizationDto = organizationService.deleteOrganization(ID);
+		
+		assertEquals(organization.getId(), deletedOrganizationDto.getId());
+		assertEquals(organization.getName(), deletedOrganizationDto.getName());
+	}
+	
+	@Test
+	void testCreatePractice() {
+		PracticeDto practiceDto = PracticeDto.builder().name(NAME).build();
+		
+		when(organizationRepository.findById(ID)).thenReturn(Optional.of(organization));
+		when(practiceService.createPractice(practiceDto, organization)).thenReturn(practiceDto);
+		
+		PracticeDto createdPractice = organizationService.createPractice(ID, practiceDto);
+		
+		assertEquals(NAME, createdPractice.getName());
 	}
 
 }

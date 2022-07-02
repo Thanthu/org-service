@@ -74,9 +74,11 @@ class PracticeServiceImplTest {
 
 	@Test
 	void testCreatePractice() {
+		Organization organization = Organization.builder().id(ID).build();
+		
 		when(practiceRepository.save(any())).then(returnsFirstArg());
 		
-		PracticeDto savedPractice = practiceService.createPractice(practiceDto);
+		PracticeDto savedPractice = practiceService.createPractice(practiceDto, organization);
 		
 		verify(practiceRepository, times(1)).save(any());
 		assertEquals(NAME, savedPractice.getName());
@@ -209,11 +211,11 @@ class PracticeServiceImplTest {
 					.build())
 				.collect(Collectors.toList());
 		
-		when(practiceRepository.findAllByName(NAME)).thenReturn(practices);
+		when(practiceRepository.findAllByName(NAME.toLowerCase())).thenReturn(practices);
 		
 		Set<PracticeDto> practiceDtos = practiceService.findPracticesByName(NAME, false, false);
 		
-		verify(practiceRepository, times(1)).findAllByName(NAME);
+		verify(practiceRepository, times(1)).findAllByName(NAME.toLowerCase());
 		assertEquals(ids.size(), practiceDtos.size());
 		assertEquals(0, practiceDtos.iterator().next().getUsers().size());
 		assertNull(practiceDtos.iterator().next().getOrganization());
@@ -233,11 +235,11 @@ class PracticeServiceImplTest {
 					.build())
 				.collect(Collectors.toList());
 		
-		when(practiceRepository.findAllByName(NAME)).thenReturn(practices);
+		when(practiceRepository.findAllByName(NAME.toLowerCase())).thenReturn(practices);
 		
 		Set<PracticeDto> practiceDtos = practiceService.findPracticesByName(NAME, true, false);
 		
-		verify(practiceRepository, times(1)).findAllByName(NAME);
+		verify(practiceRepository, times(1)).findAllByName(NAME.toLowerCase());
 		assertEquals(ids.size(), practiceDtos.size());
 		assertEquals(2, practiceDtos.iterator().next().getUsers().size());
 		assertNull(practiceDtos.iterator().next().getOrganization());
@@ -257,11 +259,11 @@ class PracticeServiceImplTest {
 					.build())
 				.collect(Collectors.toList());
 		
-		when(practiceRepository.findAllByName(NAME)).thenReturn(practices);
+		when(practiceRepository.findAllByName(NAME.toLowerCase())).thenReturn(practices);
 		
 		Set<PracticeDto> practiceDtos = practiceService.findPracticesByName(NAME, false, true);
 		
-		verify(practiceRepository, times(1)).findAllByName(NAME);
+		verify(practiceRepository, times(1)).findAllByName(NAME.toLowerCase());
 		assertEquals(ids.size(), practiceDtos.size());
 		assertEquals(0, practiceDtos.iterator().next().getUsers().size());
 		assertNotNull(practiceDtos.iterator().next().getOrganization());

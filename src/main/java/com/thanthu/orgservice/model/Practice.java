@@ -28,11 +28,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -54,10 +54,12 @@ public class Practice {
 	@Column(nullable = false)
 	private String name;
 
+	@ToString.Exclude
 	@ManyToOne
-	@JoinColumn(name = "organization_id")
+	@JoinColumn(name = "organization_id", nullable = false)
 	private Organization organization;
 
+	@ToString.Exclude
 	@Builder.Default
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_practice", joinColumns = @JoinColumn(name = "practice_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))

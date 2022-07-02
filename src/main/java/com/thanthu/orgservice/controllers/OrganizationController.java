@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.validation.Valid;
 
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thanthu.orgservice.dtos.OrganizationDto;
+import com.thanthu.orgservice.dtos.PracticeDto;
 import com.thanthu.orgservice.services.OrganizationService;
 import com.thanthu.orgservice.validation.groups.OnCreateOrganization;
+import com.thanthu.orgservice.validation.groups.OnCreatePractice;
 import com.thanthu.orgservice.validation.groups.OnUpdateOrganizationName;
 
 import lombok.RequiredArgsConstructor;
@@ -61,4 +64,15 @@ public class OrganizationController {
 		return organizationService.findOrganizationById(id, showPractices);
 	}
 	
+	@PostMapping("/{id}/practice")
+	@Validated(OnCreatePractice.class)
+	public PracticeDto createPractice(@PathVariable Long id, @Valid @RequestBody PracticeDto practiceDto) {
+		return organizationService.createPractice(id, practiceDto);
+	}
+	
+	@DeleteMapping("/{id}")
+	public OrganizationDto deleteOrganization(@PathVariable Long id) {
+		return organizationService.deleteOrganization(id);
+	}
+
 }

@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -28,6 +29,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.thanthu.orgservice.dtos.OrganizationDto;
+import com.thanthu.orgservice.dtos.PracticeDto;
 import com.thanthu.orgservice.exceptions.NotFoundException;
 import com.thanthu.orgservice.services.OrganizationService;
 
@@ -206,6 +208,59 @@ class OrganizationControllerTest {
 		.andExpect(status().isNotFound());
 		
 		verify(organizationService, times(1)).findOrganizationById(anyLong(), anyBoolean());
+	}
+	
+	@Test
+	void testCreatePractice() throws Exception {
+		PracticeDto practiceDto = PracticeDto.builder()
+		.id(ID)
+		.name(NAME)
+		.createdDateTime(DATE_TIME)
+		.updateDateTime(DATE_TIME)
+		.build();
+		
+		when(organizationService.createPractice(anyLong(), any())).thenReturn(practiceDto);
+		
+		mockMvc.perform(post(API_BASE_URL + "/" + ID + "/practice")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(practiceDto)))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.id").value(ID))
+		.andExpect(jsonPath("$.name").value(NAME))
+		.andExpect(jsonPath("$.createdDateTime").exists())
+		.andExpect(jsonPath("$.updateDateTime").exists());
+		
+		verify(organizationService, times(1)).createPractice(anyLong(), any());
+	}
+	
+	@Test
+	void testCreatePracticeNameNull() throws Exception {
+		PracticeDto practiceDto = PracticeDto.builder().build();
+		
+		mockMvc.perform(post(API_BASE_URL)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(asJsonString(practiceDto)))
+		.andExpect(status().isBadRequest());
+		
+		verify(organizationService, times(0)).createPractice(anyLong(), any());
+	}
+	
+	@Test
+	public void testDeleteOrganization() throws Exception {
+		OrganizationDto savedOrganizationDto = OrganizationDto.builder()
+				.id(ID)
+				.name(NAME)
+				.createdDateTime(DATE_TIME)
+				.updateDateTime(DATE_TIME)
+				.build();
+		
+		when(organizationService.deleteOrganization(anyLong())).thenReturn(savedOrganizationDto);
+		
+		mockMvc.perform(delete(API_BASE_URL + "/" + ID)
+				.contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.id").value(ID));
+		
 	}
 
 }

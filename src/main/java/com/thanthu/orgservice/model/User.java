@@ -29,11 +29,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -59,6 +59,7 @@ public class User {
 	@UpdateTimestamp
 	private LocalDateTime updateDateTime;
 	
+	@ToString.Exclude
 	@Builder.Default
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "users")
 	private Set<Practice> practices = new HashSet<>();

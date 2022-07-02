@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import com.thanthu.orgservice.converters.OrganizationDtoToOrganizationConverter;
 import com.thanthu.orgservice.converters.OrganizationToOrganizationDtoConverter;
 import com.thanthu.orgservice.dtos.OrganizationDto;
+import com.thanthu.orgservice.dtos.PracticeDto;
 import com.thanthu.orgservice.exceptions.NotFoundException;
 import com.thanthu.orgservice.model.Organization;
 import com.thanthu.orgservice.repositories.OrganizationRepository;
@@ -17,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class OrganizationServiceImpl implements OrganizationService {
 
 	private final OrganizationDtoToOrganizationConverter organizationDtoToOrganizationConverter;
@@ -24,6 +28,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 	private final OrganizationToOrganizationDtoConverter organizationToOrganizationDtoConverter;
 	
 	private final OrganizationRepository organizationRepository;
+	
+	private final PracticeService practiceService;
 	
 	@Override
 	public OrganizationDto createOrganization(OrganizationDto organizationDto) {
@@ -79,6 +85,24 @@ public class OrganizationServiceImpl implements OrganizationService {
 		return organizations.stream()
 				.map(organization -> organizationToOrganizationDtoConverter.convert(organization))
 				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public OrganizationDto deleteOrganization(Long id) {
+		Organization organization = findById(id);
+		OrganizationDto organizationDto = organizationToOrganizationDtoConverter.convert(organization);
+		deleteOrganization(organization);
+		return organizationDto;
+	}
+	
+	private void deleteOrganization(Organization organization) {
+		organizationRepository.delete(organization);
+	}
+
+	@Override
+	public PracticeDto createPractice(Long id, PracticeDto practiceDto) {
+		Organization organization = findById(id);
+		return practiceService.createPractice(practiceDto, organization);
 	}
 
 }

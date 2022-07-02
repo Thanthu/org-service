@@ -10,7 +10,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,41 +48,6 @@ class PracticeControllerTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		practiceDto = PracticeDto.builder().name(NAME).build();
-	}
-
-	@Test
-	void testCreatePractice() throws Exception {
-		PracticeDto createdPracticeDto = PracticeDto.builder()
-		.id(ID)
-		.name(NAME)
-		.createdDateTime(DATE_TIME)
-		.updateDateTime(DATE_TIME)
-		.build();
-		
-		when(practiceService.createPractice(any())).thenReturn(createdPracticeDto);
-		
-		mockMvc.perform(post(API_BASE_URL)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(asJsonString(practiceDto)))
-		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.id").value(ID))
-		.andExpect(jsonPath("$.name").value(NAME))
-		.andExpect(jsonPath("$.createdDateTime").exists())
-		.andExpect(jsonPath("$.updateDateTime").exists());
-		
-		verify(practiceService, times(1)).createPractice(any());
-	}
-	
-	@Test
-	void testCreatePracticeNameNull() throws Exception {
-		practiceDto.setName(null);
-		
-		mockMvc.perform(post(API_BASE_URL)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(asJsonString(practiceDto)))
-		.andExpect(status().isBadRequest());
-		
-		verify(practiceService, times(0)).createPractice(any());
 	}
 
 	@Test

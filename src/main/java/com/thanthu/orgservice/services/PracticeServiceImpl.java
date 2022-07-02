@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import com.thanthu.orgservice.converters.PracticeDtoToPracticeConverter;
 import com.thanthu.orgservice.converters.PracticeToPracticeDtoConverter;
 import com.thanthu.orgservice.dtos.PracticeDto;
 import com.thanthu.orgservice.exceptions.NotFoundException;
+import com.thanthu.orgservice.model.Organization;
 import com.thanthu.orgservice.model.Practice;
 import com.thanthu.orgservice.repositories.PracticeRepository;
 
@@ -17,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class PracticeServiceImpl implements PracticeService {
 	
 	private final PracticeDtoToPracticeConverter practiceDtoToPracticeConverter;
@@ -26,8 +30,9 @@ public class PracticeServiceImpl implements PracticeService {
 	private final PracticeRepository practiceRepository;
 	
 	@Override
-	public PracticeDto createPractice(PracticeDto practiceDto) {
+	public PracticeDto createPractice(PracticeDto practiceDto, Organization organization) {
 		Practice practice = practiceDtoToPracticeConverter.convert(practiceDto);
+		practice.setOrganization(organization);
 		Practice savedPractice = savePractice(practice);
 		return practiceToPracticeDtoConverter.convert(savedPractice);
 	}
@@ -103,5 +108,5 @@ public class PracticeServiceImpl implements PracticeService {
 				.map(practice -> practiceToPracticeDtoConverter.convert(practice))
 				.collect(Collectors.toSet());
 	}
-
+	
 }
