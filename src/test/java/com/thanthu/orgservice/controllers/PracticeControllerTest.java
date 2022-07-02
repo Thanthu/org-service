@@ -6,10 +6,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -170,6 +172,15 @@ class PracticeControllerTest {
 		.andExpect(status().isNotFound());
 		
 		verify(practiceService, times(1)).findPracticeById(anyLong(), anyBoolean(), anyBoolean());
+	}
+	
+	@Test
+	void testAddUserToPractice() throws Exception {
+		doNothing().when(practiceService).addUserToPractice(ID, ID);
+		
+		mockMvc.perform(post(API_BASE_URL + "/" + ID + "/user/" + ID)
+				.contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isOk());
 	}
 
 }

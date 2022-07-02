@@ -14,6 +14,7 @@ import com.thanthu.orgservice.dtos.PracticeDto;
 import com.thanthu.orgservice.exceptions.NotFoundException;
 import com.thanthu.orgservice.model.Organization;
 import com.thanthu.orgservice.model.Practice;
+import com.thanthu.orgservice.model.User;
 import com.thanthu.orgservice.repositories.PracticeRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,8 @@ public class PracticeServiceImpl implements PracticeService {
 	private final PracticeToPracticeDtoConverter practiceToPracticeDtoConverter;
 	
 	private final PracticeRepository practiceRepository;
+	
+	private final UserService userService;
 	
 	@Override
 	public PracticeDto createPractice(PracticeDto practiceDto, Organization organization) {
@@ -107,6 +110,14 @@ public class PracticeServiceImpl implements PracticeService {
 		return practices.stream()
 				.map(practice -> practiceToPracticeDtoConverter.convert(practice))
 				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public void addUserToPractice(Long id, Long userId) {
+		Practice practice = findById(id);
+		User user = userService.findById(userId);
+		practice.getUsers().add(user);
+		savePractice(practice);
 	}
 	
 }

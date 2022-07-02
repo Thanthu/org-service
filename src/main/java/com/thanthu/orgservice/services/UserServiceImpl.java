@@ -71,11 +71,13 @@ public class UserServiceImpl implements UserService {
 		return userToUserDtoConverter.convert(user);
 	}
 	
-	private User saveUser(User user) {
+	@Override
+	public User saveUser(User user) {
 		return userRepository.save(user);
 	}
 	
-	private User findById(Long id) {
+	@Override
+	public User findById(Long id) {
 		return userRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException("User not found."));
 	}

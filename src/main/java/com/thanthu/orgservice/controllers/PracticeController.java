@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,6 +55,12 @@ public class PracticeController {
 			@RequestParam(defaultValue = "false") boolean showUsers,
 			@RequestParam(defaultValue = "false") boolean showOrganization) {
 		return practiceService.findPracticeById(id, showUsers, showOrganization);
+	}
+	
+	@PostMapping("/{id}/user/{userId}")
+	@Validated(OnUpdatePracticeName.class)
+	public void addUserToPractice(@PathVariable Long id, @PathVariable Long userId) {
+		practiceService.addUserToPractice(id, userId);
 	}
 
 }

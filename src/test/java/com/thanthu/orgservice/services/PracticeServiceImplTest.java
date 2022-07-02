@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -51,6 +52,9 @@ class PracticeServiceImplTest {
 	
 	@Mock
 	private PracticeRepository practiceRepository;
+	
+	@Mock
+	private UserService userService;
 	
 	@InjectMocks
 	private PracticeServiceImpl practiceService;
@@ -283,11 +287,11 @@ class PracticeServiceImplTest {
 					.build())
 				.collect(Collectors.toList());
 		
-		when(practiceRepository.findAllByName(NAME)).thenReturn(practices);
+		when(practiceRepository.findAllByName(NAME.toLowerCase())).thenReturn(practices);
 		
 		Set<PracticeDto> practiceDtos = practiceService.findPracticesByName(NAME, true, true);
 		
-		verify(practiceRepository, times(1)).findAllByName(NAME);
+		verify(practiceRepository, times(1)).findAllByName(NAME.toLowerCase());
 		assertEquals(ids.size(), practiceDtos.size());
 		assertEquals(2, practiceDtos.iterator().next().getUsers().size());
 		assertNotNull(practiceDtos.iterator().next().getOrganization());
@@ -345,6 +349,22 @@ class PracticeServiceImplTest {
 		assertEquals(ID, savedPracticeDto.getId());
 		assertEquals(2, savedPracticeDto.getUsers().size());
 		assertNotNull(savedPracticeDto.getOrganization());
+	}
+	
+	@Test
+	void testAddUserToPractice() {
+		practice.setUsers(new HashSet<>());
+		User user = User.builder().id(ID).build();
+		
+		when(practiceRepository.findById(ID)).thenReturn(Optional.of(practice));
+		when(practiceRepository.save(practice)).then(returnsFirstArg());
+		when(userService.findById(ID)).thenReturn(user);
+		
+		practiceService.addUserToPractice(ID, ID);
+
+		verify(practiceRepository, times(1)).save(practice);
+		
+		assertEquals(practice.getUsers().iterator().next(), user);
 	}
 
 }

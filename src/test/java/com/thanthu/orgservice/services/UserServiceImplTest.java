@@ -3,7 +3,6 @@ package com.thanthu.orgservice.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -28,7 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.thanthu.orgservice.converters.UserDtoToUserConverter;
 import com.thanthu.orgservice.converters.UserToUserDtoConverter;
-import com.thanthu.orgservice.dtos.PracticeDto;
 import com.thanthu.orgservice.dtos.UserDto;
 import com.thanthu.orgservice.enums.UserType;
 import com.thanthu.orgservice.model.Organization;

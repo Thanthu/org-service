@@ -21,4 +21,6 @@ public interface PracticeService {
 
 	public Practice findById(Long id);
 
+	public void addUserToPractice(Long id, Long userId);
+
 }
