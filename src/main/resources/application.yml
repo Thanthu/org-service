@@ -1,0 +1,4 @@
+spring:
+  application:    name: org
+  profiles:    active:    - default
+  config:    import:    - configserver:http://localhost:8082
