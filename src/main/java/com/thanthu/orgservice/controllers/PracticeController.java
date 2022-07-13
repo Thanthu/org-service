@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.thanthu.orgservice.dtos.PatientDto;
 import com.thanthu.orgservice.dtos.PracticeDto;
 import com.thanthu.orgservice.services.PracticeService;
 import com.thanthu.orgservice.validation.groups.OnUpdatePracticeName;
@@ -61,6 +62,11 @@ public class PracticeController {
 	@Validated(OnUpdatePracticeName.class)
 	public void addUserToPractice(@PathVariable Long id, @PathVariable Long userId) {
 		practiceService.addUserToPractice(id, userId);
+	}
+	
+	@GetMapping("/{id}/patients")
+	public Set<PatientDto> listPatientsByPractice(@PathVariable Long id) {
+		return practiceService.listPatientsByPractice(id);
 	}
 
 }

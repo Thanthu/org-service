@@ -10,12 +10,14 @@ import org.springframework.stereotype.Service;
 
 import com.thanthu.orgservice.converters.PracticeDtoToPracticeConverter;
 import com.thanthu.orgservice.converters.PracticeToPracticeDtoConverter;
+import com.thanthu.orgservice.dtos.PatientDto;
 import com.thanthu.orgservice.dtos.PracticeDto;
 import com.thanthu.orgservice.exceptions.NotFoundException;
 import com.thanthu.orgservice.model.Organization;
 import com.thanthu.orgservice.model.Practice;
 import com.thanthu.orgservice.model.User;
 import com.thanthu.orgservice.repositories.PracticeRepository;
+import com.thanthu.orgservice.services.clients.PatientClient;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +33,8 @@ public class PracticeServiceImpl implements PracticeService {
 	private final PracticeRepository practiceRepository;
 	
 	private final UserService userService;
+	
+	private final PatientClient patientClient;
 	
 	@Override
 	public PracticeDto createPractice(PracticeDto practiceDto, Organization organization) {
@@ -118,6 +122,11 @@ public class PracticeServiceImpl implements PracticeService {
 		User user = userService.findById(userId);
 		practice.getUsers().add(user);
 		savePractice(practice);
+	}
+	
+	@Override
+	public Set<PatientDto> listPatientsByPractice(Long practiceId) {
+		return patientClient.listPatientsByPractice(practiceId);
 	}
 	
 }

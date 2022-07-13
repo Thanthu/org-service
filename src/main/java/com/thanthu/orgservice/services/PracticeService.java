@@ -3,6 +3,7 @@ package com.thanthu.orgservice.services;
 import java.util.List;
 import java.util.Set;
 
+import com.thanthu.orgservice.dtos.PatientDto;
 import com.thanthu.orgservice.dtos.PracticeDto;
 import com.thanthu.orgservice.model.Organization;
 import com.thanthu.orgservice.model.Practice;
@@ -22,5 +23,7 @@ public interface PracticeService {
 	public Practice findById(Long id);
 
 	public void addUserToPractice(Long id, Long userId);
+
+	public Set<PatientDto> listPatientsByPractice(Long practiceId);
 
 }
