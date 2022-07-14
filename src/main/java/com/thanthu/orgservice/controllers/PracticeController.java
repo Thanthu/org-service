@@ -20,6 +20,7 @@ import com.thanthu.orgservice.dtos.PracticeDto;
 import com.thanthu.orgservice.services.PracticeService;
 import com.thanthu.orgservice.validation.groups.OnUpdatePracticeName;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -64,6 +65,7 @@ public class PracticeController {
 		practiceService.addUserToPractice(id, userId);
 	}
 	
+	@CircuitBreaker(name = "practiceControllerListPatientsByPractice")
 	@GetMapping("/{id}/patients")
 	public Set<PatientDto> listPatientsByPractice(@PathVariable Long id) {
 		return practiceService.listPatientsByPractice(id);

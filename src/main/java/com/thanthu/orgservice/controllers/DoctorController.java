@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.thanthu.orgservice.dtos.PatientDto;
 import com.thanthu.orgservice.services.DoctorService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -19,8 +20,9 @@ public class DoctorController {
 	
 	private final DoctorService doctorService;
 	
+	@CircuitBreaker(name = "doctorControllerListPatientsByDoctor")
 	@GetMapping("/{id}/patients")
-	public Set<PatientDto> listPatientsByPractice(@PathVariable Long id) {
+	public Set<PatientDto> listPatientsByDoctor(@PathVariable Long id) {
 		return doctorService.listPatientsByDoctor(id);
 	}
 
